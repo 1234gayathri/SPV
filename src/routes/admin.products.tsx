@@ -40,7 +40,7 @@ export const deleteProductFn = createServerFn({ method: "POST" })
 export const Route = createFileRoute("/admin/products")({
   component: ProductsPage,
   loader: () => getProductsFn(),
-  head: () => ({ meta: [{ title: "Products — Sadbhaav Admin" }] }),
+  head: () => ({ meta: [{ title: "Products — SPV Export Admin" }] }),
 });
 
 // ─── Component ────────────────────────────────────────────────────────────────

@@ -39,7 +39,7 @@ export const deleteCouponFn = createServerFn({ method: "POST" })
 export const Route = createFileRoute("/admin/offers")({
   component: Offers,
   loader: () => getCouponsFn(),
-  head: () => ({ meta: [{ title: "Offers — Sadbhaav Admin" }] }),
+  head: () => ({ meta: [{ title: "Offers — SPV Export Admin" }] }),
 });
 
 // ─── Component ────────────────────────────────────────────────────────────────

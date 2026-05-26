@@ -34,7 +34,7 @@ export const deleteTestimonialFn = createServerFn({ method: "POST" })
 export const Route = createFileRoute("/admin/content")({
   component: Content,
   loader: () => getContentFn(),
-  head: () => ({ meta: [{ title: "Content — Sadbhaav Admin" }] }),
+  head: () => ({ meta: [{ title: "Content — SPV Export Admin" }] }),
 });
 
 // ─── Component ────────────────────────────────────────────────────────────────
