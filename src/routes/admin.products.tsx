@@ -380,27 +380,28 @@ function ProductsPage() {
               />
             </div>
             <div className="sm:col-span-2">
-              <label className="text-xs text-muted-foreground">Image</label>
-              <div className="mt-1 relative flex items-center justify-center overflow-hidden rounded-xl border border-dashed bg-muted/30 py-10 text-sm text-muted-foreground hover:bg-muted/50 transition cursor-pointer">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleImageUpload(e, setImage)}
-                  className="absolute inset-0 cursor-pointer opacity-0"
-                />
-                {image ? (
-                  <img
-                    key={image}
-                    src={image}
-                    alt="Preview"
-                    className="absolute inset-0 h-full w-full object-cover"
-                  />
-                ) : (
-                  <>
-                    <ImagePlus className="mr-2 h-5 w-5" /> Click to upload or
-                    drag & drop
-                  </>
+              <label className="text-xs text-muted-foreground">Product Image</label>
+              <div className="mt-2 flex flex-col items-center gap-3">
+                {image && (
+                  <div className="relative h-40 w-40 overflow-hidden rounded-2xl border bg-muted shadow-soft">
+                    <img
+                      key={image}
+                      src={image}
+                      alt="Preview"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
                 )}
+                <div className="relative inline-flex items-center gap-2 rounded-full border bg-background px-5 py-2.5 text-sm font-semibold text-foreground hover:bg-muted/10 transition cursor-pointer shadow-sm">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleImageUpload(e, setImage)}
+                    className="absolute inset-0 cursor-pointer opacity-0"
+                  />
+                  <ImagePlus className="h-4 w-4" />
+                  {image ? "Upload different image" : "Upload image"}
+                </div>
               </div>
             </div>
           </div>
@@ -506,32 +507,34 @@ function ProductsPage() {
               />
             </div>
             <div className="sm:col-span-2">
-              <label className="text-xs text-muted-foreground">Image</label>
-              <div className="mt-1 relative flex items-center justify-center overflow-hidden rounded-xl border border-dashed bg-muted/30 py-10 text-sm text-muted-foreground hover:bg-muted/50 transition cursor-pointer">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) =>
-                    handleImageUpload(e, (v) =>
-                      setEditProduct((prev) =>
-                        prev ? { ...prev, image: v } : null,
-                      ),
-                    )
-                  }
-                  className="absolute inset-0 cursor-pointer opacity-0"
-                />
-                {editProduct.image ? (
-                  <img
-                    key={editProduct.image}
-                    src={editProduct.image}
-                    alt="Preview"
-                    className="absolute inset-0 h-full w-full object-cover"
-                  />
-                ) : (
-                  <>
-                    <ImagePlus className="mr-2 h-5 w-5" /> Click to change image
-                  </>
+              <label className="text-xs text-muted-foreground">Product Image</label>
+              <div className="mt-2 flex flex-col items-center gap-3">
+                {editProduct.image && (
+                  <div className="relative h-40 w-40 overflow-hidden rounded-2xl border bg-muted shadow-soft">
+                    <img
+                      key={editProduct.image}
+                      src={editProduct.image}
+                      alt="Preview"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
                 )}
+                <div className="relative inline-flex items-center gap-2 rounded-full border bg-background px-5 py-2.5 text-sm font-semibold text-foreground hover:bg-muted/10 transition cursor-pointer shadow-sm">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) =>
+                      handleImageUpload(e, (v) =>
+                        setEditProduct((prev) =>
+                          prev ? { ...prev, image: v } : null,
+                        ),
+                      )
+                    }
+                    className="absolute inset-0 cursor-pointer opacity-0"
+                  />
+                  <ImagePlus className="h-4 w-4" />
+                  {editProduct.image ? "Upload different image" : "Upload image"}
+                </div>
               </div>
             </div>
           </div>
