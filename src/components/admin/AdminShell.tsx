@@ -20,9 +20,7 @@ const nav = [
 
 export const getAdminHeaderDataFn = createServerFn({ method: "GET" }).handler(
   async () => {
-    const { getSettings } = await import("@/lib/db");
-    const settings = await getSettings();
-    return { supportEmail: settings.email };
+    return { supportEmail: "exim@spvexports.com" };
   },
 );
 
