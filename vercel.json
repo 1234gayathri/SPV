@@ -8,4 +8,10 @@
       "destination": "/api/ssr"
     }
   ]
+  ,
+  "functions": {
+    "api/ssr.js": {
+      "runtime": "nodejs18.x"
+    }
+  }
 }
