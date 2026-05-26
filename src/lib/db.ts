@@ -338,18 +338,6 @@ export async function getCustomers(): Promise<Customer[]> {
 // Coupons
 export async function getCoupons(): Promise<Coupon[]> {
   const db = await readDb();
-  const now = new Date();
-  const before = db.coupons.length;
-  // Auto-delete coupons whose expiry date has passed
-  db.coupons = db.coupons.filter((c) => {
-    if (!c.expiry) return true; // no expiry = keep forever
-    const expDate = new Date(c.expiry);
-    if (isNaN(expDate.getTime())) return true; // invalid date = keep
-    return expDate >= now; // keep only if not yet expired
-  });
-  if (db.coupons.length !== before) {
-    await writeDb(db); // only write if something was actually deleted
-  }
   return db.coupons;
 }
 

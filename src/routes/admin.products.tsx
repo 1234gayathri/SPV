@@ -70,6 +70,8 @@ function ProductsPage() {
   const [description, setDescription] = useState("");
   const [tagline, setTagline] = useState("");
   const [image, setImage] = useState("");
+  const [rating, setRating] = useState("0");
+  const [reviews, setReviews] = useState("0");
 
   const list = products.filter((p) => {
     const matchQ =
@@ -134,6 +136,8 @@ function ProductsPage() {
     setDescription("");
     setTagline("");
     setImage("");
+    setRating("0");
+    setReviews("0");
     setModal(true);
   };
 
@@ -154,8 +158,8 @@ function ProductsPage() {
           quantity: quantity || undefined,
           description,
           tagline,
-          rating: 0,
-          reviews: 0,
+          rating: Number(rating),
+          reviews: Number(reviews),
           image: image || "https://via.placeholder.com/150",
           ingredients: [],
         },
@@ -368,6 +372,19 @@ function ProductsPage() {
               onChange={(e: any) => setTagline(e.target.value)}
               className="sm:col-span-2"
             />
+            <Field
+              label="Rating (0-5)"
+              type="number"
+              step="0.1"
+              value={rating}
+              onChange={(e: any) => setRating(e.target.value)}
+            />
+            <Field
+              label="Reviews count"
+              type="number"
+              value={reviews}
+              onChange={(e: any) => setReviews(e.target.value)}
+            />
             <div className="sm:col-span-2">
               <label className="text-xs text-muted-foreground">
                 Description
@@ -490,6 +507,29 @@ function ProductsPage() {
                 setEditProduct({ ...editProduct, tagline: e.target.value })
               }
               className="sm:col-span-2"
+            />
+            <Field
+              label="Rating (0-5)"
+              type="number"
+              step="0.1"
+              value={String(editProduct.rating ?? 0)}
+              onChange={(e: any) =>
+                setEditProduct({
+                  ...editProduct,
+                  rating: Number(e.target.value),
+                })
+              }
+            />
+            <Field
+              label="Reviews count"
+              type="number"
+              value={String(editProduct.reviews ?? 0)}
+              onChange={(e: any) =>
+                setEditProduct({
+                  ...editProduct,
+                  reviews: Number(e.target.value),
+                })
+              }
             />
             <div className="sm:col-span-2">
               <label className="text-xs text-muted-foreground">
