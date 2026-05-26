@@ -23,6 +23,7 @@ export const getShopProductsFn = createServerFn({ method: "GET" }).handler(
 export const Route = createFileRoute("/_store/shop")({
   component: Shop,
   loader: () => getShopProductsFn(),
+  staleTime: 0,
   validateSearch: (
     s: Record<string, unknown>,
   ): { cat?: string; q?: string; sort?: string } => ({

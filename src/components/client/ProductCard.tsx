@@ -21,6 +21,7 @@ export function ProductCard({ p }: { p: Product }) {
       <Link to="/product/$id" params={{ id: p.id }} className="block">
         <div className="relative aspect-square overflow-hidden bg-muted">
           <img
+            key={p.image}
             src={p.image}
             alt={p.name}
             loading="lazy"

@@ -131,18 +131,25 @@ async function redisGet(): Promise<DbSchema | null> {
   return null;
 }
 
-function redisSet(data: DbSchema): void {
+async function redisSet(data: DbSchema): Promise<void> {
   const url = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
   if (!url || !token) return;
-  fetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(["SET", REDIS_KEY, JSON.stringify(data)]),
-  }).catch((e) => console.error("[db] Redis SET error:", e));
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(["SET", REDIS_KEY, JSON.stringify(data)]),
+    });
+    if (!res.ok) {
+      console.error("[db] Redis SET non-ok response:", res.status, await res.text());
+    }
+  } catch (e) {
+    console.error("[db] Redis SET error:", e);
+  }
 }
 
 // ─── Read / Write ─────────────────────────────────────────────────────────────
@@ -178,7 +185,7 @@ async function readDb(): Promise<DbSchema> {
       if (!db.settings) {
         db.settings = structuredClone(SEED.settings);
         await writeLocal(db);
-        redisSet(db);
+        await redisSet(db);
       }
       _cache = db;
       return _cache;
@@ -193,7 +200,7 @@ async function readDb(): Promise<DbSchema> {
 async function writeDb(data: DbSchema): Promise<void> {
   _cache = data;
   await writeLocal(data);
-  redisSet(data);
+  await redisSet(data);
 }
 
 // ─── Public API ───────────────────────────────────────────────────────────────
@@ -208,6 +215,9 @@ export async function addProduct(
   product: Omit<Product, "id">,
 ): Promise<Product> {
   const db = await readDb();
+  if (db.products.length >= 10) {
+    throw new Error("Cannot add product: Maximum limit of 10 products reached.");
+  }
   const newProduct: Product = { ...product, id: `prod-${Date.now()}` };
   db.products = [newProduct, ...db.products];
   await writeDb(db);

@@ -87,7 +87,40 @@ function ProductsPage() {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => setter(reader.result as string);
+      reader.onloadend = () => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const MAX_WIDTH = 800;
+          const MAX_HEIGHT = 800;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            const compressed = canvas.toDataURL("image/jpeg", 0.7);
+            setter(compressed);
+          } else {
+            setter(reader.result as string);
+          }
+        };
+        img.src = reader.result as string;
+      };
       reader.readAsDataURL(file);
     }
   };
@@ -105,6 +138,10 @@ function ProductsPage() {
   };
 
   const handleAddProduct = async () => {
+    if (products.length >= 10) {
+      alert("Cannot add product: Maximum limit of 10 products reached.");
+      return;
+    }
     if (!name || !price || !stock) return;
     setIsSubmitting(true);
     try {
@@ -179,11 +216,22 @@ function ProductsPage() {
         </select>
         <button
           onClick={openAdd}
-          className="ml-auto inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2 text-sm font-semibold text-background hover:opacity-90"
+          disabled={products.length >= 10}
+          className="ml-auto inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2 text-sm font-semibold text-background hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+          title={products.length >= 10 ? "Maximum limit of 10 products reached" : "Add product"}
         >
           <Plus className="h-4 w-4" /> Add product
         </button>
       </div>
+
+      {products.length >= 10 && (
+        <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-800 text-sm flex items-start gap-3">
+          <span className="font-semibold text-base leading-none">⚠️</span>
+          <div>
+            <span className="font-semibold">Product Limit Reached:</span> You have reached the limit of 10 products. If you want to add new ones, please delete some existing products first.
+          </div>
+        </div>
+      )}
 
       {/* Table */}
       <div className="overflow-hidden rounded-2xl border bg-card shadow-soft">
@@ -342,6 +390,7 @@ function ProductsPage() {
                 />
                 {image ? (
                   <img
+                    key={image}
                     src={image}
                     alt="Preview"
                     className="absolute inset-0 h-full w-full object-cover"
@@ -473,6 +522,7 @@ function ProductsPage() {
                 />
                 {editProduct.image ? (
                   <img
+                    key={editProduct.image}
                     src={editProduct.image}
                     alt="Preview"
                     className="absolute inset-0 h-full w-full object-cover"

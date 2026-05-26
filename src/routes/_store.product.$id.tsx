@@ -60,6 +60,7 @@ export const Route = createFileRoute("/_store/product/$id")({
     if (!res.product) throw notFound();
     return { product: res.product, all: res.all };
   },
+  staleTime: 0,
   notFoundComponent: () => (
     <div className="mx-auto max-w-2xl px-6 py-32 text-center">
       <h1 className="font-display text-3xl">Product not found</h1>
@@ -134,6 +135,7 @@ function ProductDetail() {
         <div className="grid gap-2 sm:gap-3">
           <div className="overflow-hidden rounded-2xl sm:rounded-3xl bg-card shadow-soft aspect-square">
             <img
+              key={p.image}
               src={p.image}
               alt={p.name}
               width={1024}
@@ -148,6 +150,7 @@ function ProductDetail() {
                 className="aspect-square overflow-hidden rounded-lg sm:rounded-xl border bg-card"
               >
                 <img
+                  key={p.image}
                   src={p.image}
                   alt=""
                   loading="lazy"

@@ -46,6 +46,7 @@ export const getClientHomeFn = createServerFn({ method: "GET" }).handler(
 export const Route = createFileRoute("/_store/")({
   component: ClientHome,
   loader: () => getClientHomeFn(),
+  staleTime: 0,
   head: () => ({ meta: [{ title: "spvexport.com — Store" }] }),
 });
 
