@@ -396,11 +396,12 @@ function ProductsPage() {
                   <input
                     type="file"
                     accept="image/*"
+                    onClick={(e) => { (e.target as HTMLInputElement).value = "" }}
                     onChange={(e) => handleImageUpload(e, setImage)}
                     className="absolute inset-0 cursor-pointer opacity-0"
                   />
                   <ImagePlus className="h-4 w-4" />
-                  {image ? "Upload different image" : "Upload image"}
+                  {image ? "Reupload image" : "Upload image"}
                 </div>
               </div>
             </div>
@@ -523,6 +524,7 @@ function ProductsPage() {
                   <input
                     type="file"
                     accept="image/*"
+                    onClick={(e) => { (e.target as HTMLInputElement).value = "" }}
                     onChange={(e) =>
                       handleImageUpload(e, (v) =>
                         setEditProduct((prev) =>
@@ -533,7 +535,7 @@ function ProductsPage() {
                     className="absolute inset-0 cursor-pointer opacity-0"
                   />
                   <ImagePlus className="h-4 w-4" />
-                  {editProduct.image ? "Upload different image" : "Upload image"}
+                  {editProduct.image ? "Reupload image" : "Upload image"}
                 </div>
               </div>
             </div>
