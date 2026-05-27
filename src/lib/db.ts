@@ -168,15 +168,24 @@ async function readDb(): Promise<DbSchema> {
   // 1. Return in-memory cache if available (fastest)
   if (_cache) return _cache;
 
-  // 2. Try Upstash Redis first (if configured, survives restarts/redeploys)
+  // 2. Try Upstash Redis first — this is the AUTHORITATIVE source of truth
+  //    Redis survives server restarts, redeploys, and ephemeral filesystems
   const fromRedis = await redisGet();
   if (fromRedis) {
+    console.log("[db] Loaded data from Redis (authoritative source)");
+    // Ensure settings exist (backwards compat)
+    if (!fromRedis.settings) {
+      fromRedis.settings = structuredClone(SEED.settings);
+      await redisSet(fromRedis);
+    }
     _cache = fromRedis;
-    await writeLocal(fromRedis);
+    // Sync to local file as a backup (non-blocking)
+    writeLocal(fromRedis).catch(() => {});
     return _cache;
   }
 
-  // 3. Fallback to local JSON file (fast, works within same server session / local dev)
+  // 3. Fallback to local JSON file (only used if Redis is not configured or empty)
+  //    This is useful for local dev or when Redis has no data yet
   try {
     const { fs, DB_FILE } = await getLocalDbPaths();
     if (fs.existsSync(DB_FILE)) {
@@ -184,23 +193,32 @@ async function readDb(): Promise<DbSchema> {
       const db = JSON.parse(raw) as DbSchema;
       if (!db.settings) {
         db.settings = structuredClone(SEED.settings);
-        await writeLocal(db);
-        await redisSet(db);
       }
       _cache = db;
+      console.log("[db] Loaded data from local JSON file");
+      // Push local data to Redis so it becomes the source of truth going forward
+      await redisSet(db);
       return _cache;
     }
-  } catch {}
+  } catch (e) {
+    console.error("[db] Error reading local JSON file:", e);
+  }
 
-  // 4. First-ever run — use seed data
+  // 4. First-ever run — use seed data and PERSIST it immediately
+  console.log("[db] First run — seeding initial data and persisting to Redis + local file");
   _cache = structuredClone(SEED);
+  await writeLocal(_cache);
+  await redisSet(_cache);
   return _cache;
 }
 
 async function writeDb(data: DbSchema): Promise<void> {
   _cache = data;
-  await writeLocal(data);
-  await redisSet(data);
+  // Write to BOTH stores in parallel for maximum persistence
+  await Promise.all([
+    writeLocal(data).catch((e) => console.error("[db] writeLocal failed:", e)),
+    redisSet(data).catch((e) => console.error("[db] redisSet failed:", e)),
+  ]);
 }
 
 // ─── Public API ───────────────────────────────────────────────────────────────
