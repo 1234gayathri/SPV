@@ -1,6 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -51,8 +52,17 @@ export const Route = createFileRoute("/_store/")({
 });
 
 function ClientHome() {
+  const router = useRouter();
   const { products, testimonials, coupons } = Route.useLoaderData();
-  const activeCoupon = coupons[0]; // Show the first active coupon in the promo banner
+  useEffect(() => {
+    const interval = setInterval(() => {
+      router.invalidate();
+    }, 30000);
+    // Initial invalidation on mount
+    router.invalidate();
+    return () => clearInterval(interval);
+  }, []);
+
 
   return (
     <>
