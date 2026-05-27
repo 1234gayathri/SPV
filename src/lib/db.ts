@@ -208,7 +208,7 @@ async function writeDb(data: DbSchema): Promise<void> {
 // Products
 export async function getProducts(): Promise<Product[]> {
   const db = await readDb();
-  return db.products.length ? db.products : defaultProducts;
+  return db.products;
 }
 
 export async function addProduct(
