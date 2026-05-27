@@ -63,6 +63,7 @@ function ClientHome() {
     return () => clearInterval(interval);
   }, []);
 
+  const activeCoupon = coupons[0]; // Show the first active coupon in the promo banner
 
   return (
     <>
