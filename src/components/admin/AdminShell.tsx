@@ -40,14 +40,20 @@ export function AdminShell({
   const [err, setErr] = useState("");
   const [mounted, setMounted] = useState(false);
 
-  const [headerData, setHeaderData] = useState({
-    supportEmail: "Loading...",
+  const [headerData, setHeaderData] = useState(() => {
+    const saved = typeof window !== "undefined" ? localStorage.getItem("adminHeaderData") : null;
+    return saved ? JSON.parse(saved) : { supportEmail: "Loading..." };
   });
 
   const fetchHeaderData = useCallback(() => {
     if (auth) {
       getAdminHeaderDataFn()
-        .then(setHeaderData)
+        .then((data) => {
+          setHeaderData(data);
+          if (typeof window !== "undefined") {
+            localStorage.setItem("adminHeaderData", JSON.stringify(data));
+          }
+        })
         .catch((err) => console.error("Error fetching header data:", err));
     }
   }, [auth]);
