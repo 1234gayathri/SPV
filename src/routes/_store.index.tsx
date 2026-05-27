@@ -250,7 +250,7 @@ function ClientHome() {
                   className="rounded-2xl border bg-card p-6 shadow-soft"
                 >
                   <Quote className="h-6 w-6 text-primary" />
-                  <p className="mt-4 text-sm leading-relaxed">{t.quote}</p>
+                  <p className="mt-4 text-sm leading-relaxed text-primary">{t.quote}</p>
                   <p className="mt-4 text-xs font-semibold text-muted-foreground">
                     {t.name}
                   </p>
